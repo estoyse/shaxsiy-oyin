@@ -1,18 +1,13 @@
 import { SocialConnections } from '@/components/social-connections';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { Link } from 'expo-router';
 import * as React from 'react';
-import { Pressable, type TextInput, View } from 'react-native';
+import { type TextInput, View } from 'react-native';
 
 export function SignInForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
@@ -59,7 +54,7 @@ export function SignInForm() {
                   onPress={() => {
                     // TODO: Navigate to forgot password screen
                   }}>
-                  <Text className="font-normal leading-4">Forgot your password?</Text>
+                  <Text className="leading-4 font-normal">Forgot your password?</Text>
                 </Button>
               </View>
               <Input
@@ -76,12 +71,9 @@ export function SignInForm() {
           </View>
           <Text className="text-center text-sm">
             Don&apos;t have an account?{' '}
-            <Pressable
-              onPress={() => {
-                // TODO: Navigate to sign up screen
-              }}>
+            <Link href="/auth/register">
               <Text className="text-sm underline underline-offset-4">Sign up</Text>
-            </Pressable>
+            </Link>
           </Text>
           <View className="flex-row items-center">
             <Separator className="flex-1" />

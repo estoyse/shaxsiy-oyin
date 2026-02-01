@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useColorScheme } from 'nativewind';
 import { Image, Platform, View } from 'react-native';
+import { useUniwind } from 'uniwind';
 
 const SOCIAL_CONNECTION_STRATEGIES = [
   {
@@ -22,24 +22,23 @@ const SOCIAL_CONNECTION_STRATEGIES = [
 ];
 
 export function SocialConnections() {
-  const { colorScheme } = useColorScheme();
+  const { theme } = useUniwind();
 
   return (
-    <View className="gap-2 sm:flex-row sm:gap-3">
+    <View className="w-full flex-row gap-2">
       {SOCIAL_CONNECTION_STRATEGIES.map((strategy) => {
         return (
           <Button
             key={strategy.type}
             variant="outline"
-            size="sm"
-            className="sm:flex-1"
+            className="flex-1"
             onPress={() => {
               // TODO: Authenticate with social provider and navigate to protected screen if successful
             }}>
             <Image
               className={cn('size-4', strategy.useTint && Platform.select({ web: 'dark:invert' }))}
               tintColor={Platform.select({
-                native: strategy.useTint ? (colorScheme === 'dark' ? 'white' : 'black') : undefined,
+                native: strategy.useTint ? (theme === 'dark' ? 'white' : 'black') : undefined,
               })}
               source={strategy.source}
             />
