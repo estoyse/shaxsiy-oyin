@@ -71,7 +71,7 @@ export function SignInForm() {
           </View>
           <Text className="text-center text-sm">
             Don&apos;t have an account?{' '}
-            <Link href="/auth/register">
+            <Link href="/auth/login">
               <Text className="text-sm underline underline-offset-4">Sign up</Text>
             </Link>
           </Text>

@@ -15,9 +15,9 @@ const SOCIAL_CONNECTION_STRATEGIES = [
     useTint: false,
   },
   {
-    type: 'oauth_github',
-    source: { uri: 'https://img.clerk.com/static/github.png?width=160' },
-    useTint: true,
+    type: 'oauth_facebook',
+    source: { uri: 'https://img.clerk.com/static/facebook.png?width=160' },
+    useTint: false,
   },
 ];
 
