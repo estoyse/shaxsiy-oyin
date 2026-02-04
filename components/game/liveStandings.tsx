@@ -10,6 +10,7 @@ export default function LiveStandings({ players }: { players: Player[] }) {
 
   // variables
   const snapPoints = useMemo(() => ['15%', '50%'], []);
+  if (!players) return null;
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -41,7 +42,7 @@ export default function LiveStandings({ players }: { players: Player[] }) {
               <View className="flex-row items-center gap-3">
                 <View className="relative">
                   <Image
-                    source={{ uri: player.avatarUrl }}
+                    source={{ uri: player.avatar }}
                     className={`h-10 w-10 rounded-full ${
                       player.id === 'me' ? 'border-primary border-2' : ''
                     }`}
@@ -54,7 +55,7 @@ export default function LiveStandings({ players }: { players: Player[] }) {
                   {/* Online Status Indicator */}
                   <View
                     className={`border-card absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 ${
-                      player.isReady ? 'bg-chart-2' : 'bg-muted-foreground'
+                      player.isConnected ? 'bg-chart-2' : 'bg-muted-foreground'
                     }`}
                   />
                 </View>
@@ -63,7 +64,7 @@ export default function LiveStandings({ players }: { players: Player[] }) {
                   {player.id === 'me' ? (
                     <>
                       <Text className="text-primary text-[15px] font-semibold">{player.name}</Text>
-                      {player.hasGuessedWrong && (
+                      {player.isBannedFromQuestion && (
                         <Text className="text-primary text-[11px]">You guessed wrong</Text>
                       )}
                     </>
@@ -83,7 +84,7 @@ export default function LiveStandings({ players }: { players: Player[] }) {
                       ? 'text-accent-foreground font-bold'
                       : 'text-muted-foreground font-semibold'
                   }`}>
-                  {player.currentGameScore.toLocaleString()}
+                  {player.score}
                 </Text>
               </View>
             </View>

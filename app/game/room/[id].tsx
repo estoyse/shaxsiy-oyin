@@ -3,138 +3,60 @@ import HeaderComponent from '@/components/game/header';
 import LiveStandings from '@/components/game/liveStandings';
 import QuestionComponent from '@/components/game/question';
 import SafeArea from '@/components/safeArea';
-import { getSocket } from '@/services/socket';
 import { useGameStore } from '@/store/useGameStore';
-import { GameState, Player } from '@/types/game';
-import { useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
 import { View } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useSocket } from '@/providers/socketProvider';
+import { Player, SyncStatePayload } from '@/types/game';
 import { toast } from 'sonner-native';
-
-const players: Player[] = [
-  {
-    id: 'me',
-    name: 'You',
-    currentGameScore: 1450,
-    avatarUrl: 'https://picsum.photos/seed/user1/40/40',
-    isReady: true,
-    hasGuessedWrong: false,
-  },
-  {
-    id: '2',
-    name: 'Sarah K.',
-    currentGameScore: 1200,
-    avatarUrl: 'https://picsum.photos/seed/user2/40/40',
-    isReady: false,
-    hasGuessedWrong: false,
-  },
-  {
-    id: '3',
-    name: 'Mike R.',
-    currentGameScore: 980,
-    avatarUrl: 'https://picsum.photos/seed/user3/40/40',
-    isReady: false,
-    hasGuessedWrong: false,
-  },
-  {
-    id: '4',
-    name: 'Elena T.',
-    currentGameScore: 850,
-    avatarUrl: 'https://picsum.photos/seed/user4/40/40',
-    isReady: false,
-    hasGuessedWrong: false,
-  },
-];
-
-export const MOCK_GAME_STATE: GameState = {
-  roomId: '777-BINGO',
-  phase: 'TYPING',
-  totalSubjects: 10,
-  currentSubjectIndex: 1,
-  currentQuestionIndex: 3,
-
-  currentQuestion: {
-    id: 'q_123',
-    text: 'What is the capital of Japan?',
-    difficulty: 3,
-    answerLength: 5,
-  },
-
-  // Set this to 30 seconds from "now" for your countdown component
-  expiresAt: new Date(Date.now() + 30000).toISOString(),
-
-  lockedBy: 'player_3',
-  wrongAnswersInRoom: 1,
-
-  lastGuess: {
-    playerId: 'player_2',
-    text: 'KYOTO',
-    isCorrect: false,
-  },
-
-  players,
-  hostId: 'me',
-};
 
 export default function RoomPage() {
   const { id } = useLocalSearchParams();
-  const syncWithServer = useGameStore((state) => state.syncWithServer);
-  const handleBuzzAccepted = useGameStore((state) => state.handleBuzzAccepted);
-  const [answering, setAnswering] = useState(false);
+  const { session } = useAuthStore();
+  const players = useGameStore((state) => state.players);
+  const syncRoom = useGameStore((state) => state.syncRoom);
+  const updatePlayers = useGameStore((state) => state.updatePlayers);
+  const { socket } = useSocket();
 
   useEffect(() => {
-    let socket: any;
+    // Join the room
+    if (!session || !socket) return;
+    socket.emit('JOIN_ROOM', { roomId: id, token: session.access_token });
+    socket.on('JOIN_ROOM', (data: { success: boolean; roomId: string }) => {
+      if (data.success) {
+        console.log('Joined room:', data.roomId);
+        toast.success('Joined room');
+      } else {
+        toast.error('Failed to join room');
+        router.back();
+      }
+    });
 
-    const init = async () => {
-      const s = await getSocket();
-      socket = s;
-      const myId = 'me'; // Replace with actual user ID from auth when ready
+    socket.on('ROOM_SYNC', (state: SyncStatePayload) => {
+      console.log('ROOM_SYNC', state);
+      syncRoom(state);
+    });
 
-      // 1. Initial Sync
-      s.on('ROOM_SYNC', (data) => {
-        syncWithServer(data);
-        console.log(data);
-      });
+    socket.on('PLAYER_JOINED', (data: { player: Player; reconnected?: boolean }) => {
+      console.log('PLAYER_JOINED', data.player);
+      updatePlayers(data.player);
+    });
 
-      // 2. Question Start
-      s.on('QUESTION_START', (data) => {
-        syncWithServer(data);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      });
-
-      // 3. Buzzer Result
-      s.on('BUZZ_ACCEPTED', (payload) => {
-        handleBuzzAccepted(payload.playerId);
-        if (payload.playerId === myId) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        }
-      });
-
-      // 4. Correct/Wrong Answer
-      s.on('ANSWER_RESULT', ({ isCorrect, score, playerId }) => {
-        // Show a quick animation or toast
-        if (isCorrect) {
-          toast.success('Correct Answer!');
-        } else {
-          toast.error('Wrong Answer!');
-        }
-      });
-
-      s.connect();
+    return () => {
+      socket.off('JOIN_ROOM');
+      socket.off('ROOM_SYNC');
     };
-
-    init();
-    return () => socket?.disconnect();
-  }, [syncWithServer, handleBuzzAccepted]);
+  }, [id, socket]);
 
   return (
     <View className="bg-background flex-1">
       <SafeArea edges={['top']}>
         <View className="flex-1">
           <HeaderComponent />
-          <QuestionComponent answering={answering} />
-          <ButtonContainer answering={answering} setAnswering={setAnswering} players={players} />
+          <QuestionComponent />
+          <ButtonContainer />
         </View>
       </SafeArea>
 

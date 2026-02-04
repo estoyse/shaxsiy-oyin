@@ -5,8 +5,12 @@ import { Text } from '../ui/text';
 import { BlurView } from 'expo-blur';
 import { BookTextIcon } from 'lucide-react-native';
 import { Icon } from '../ui/icon';
+import { useGameStore } from '@/store/useGameStore';
+import { useAuthStore } from '@/store/useAuthStore';
 
-export default function QuestionComponent({ answering }: { answering: boolean }) {
+export default function QuestionComponent() {
+  const lockedBy = useGameStore((state) => state.lockedBy);
+  const user = useAuthStore((state) => state.user);
   return (
     <ScrollView
       className="flex-1"
@@ -30,7 +34,7 @@ export default function QuestionComponent({ answering }: { answering: boolean })
               sit amet consectetur adipisicing elit. Quisquam, voluptatum? Lorem ipsum dolor sit
               amet consectetur adipisicing elit. Quisquam, voluptatum?
             </Text>
-            {answering && (
+            {lockedBy && user?.id !== lockedBy && (
               <BlurView
                 tint="dark"
                 intensity={20}

@@ -1,8 +1,10 @@
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated, { CSSAnimationKeyframes } from 'react-native-reanimated';
 import { Text } from '../ui/text';
 import { Icon } from '../ui/icon';
 import { BookTextIcon, TimerIcon } from 'lucide-react-native';
+import { useGameStore } from '@/store/useGameStore';
+import { useSocket } from '@/providers/socketProvider';
 
 const pulse: CSSAnimationKeyframes = {
   '0%': {
@@ -17,9 +19,15 @@ const pulse: CSSAnimationKeyframes = {
 };
 
 export default function HeaderComponent() {
+  const { socket } = useSocket();
+  const gameState = useGameStore((state) => state.gameState);
   return (
     <View className="flex-row items-center justify-between px-4 py-2">
-      <View className="flex-row items-center gap-2">
+      <Pressable
+        onPress={() => {
+          socket.emit('GAME_START');
+        }}
+        className="flex-row items-center gap-2">
         <Animated.View
           style={{
             animationName: pulse,
@@ -27,8 +35,8 @@ export default function HeaderComponent() {
             animationIterationCount: 'infinite',
           }}
           className="size-2 animate-pulse rounded-full bg-violet-500"></Animated.View>
-        <Text className="text-violet-500">O'qilmoqda</Text>
-      </View>
+        <Text className="text-violet-500">{gameState}</Text>
+      </Pressable>
       <View className="items-center justify-center"></View>
       <View className="flex-row items-center justify-center gap-2">
         <View className="bg-card border-border h-9 flex-row items-center gap-2 rounded-full border px-3 shadow-sm">

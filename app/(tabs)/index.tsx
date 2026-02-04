@@ -1,13 +1,14 @@
 import SafeArea from '@/components/safeArea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 import { useRouter } from 'expo-router';
 import { BellIcon, PlusIcon, Users2Icon } from 'lucide-react-native';
 import { Pressable, ScrollView, View } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { useAuthStore } from '@/store/useAuthStore';
+import { supabase } from '@/lib/supabase';
+import { LogOut } from 'lucide-react-native';
 
 export interface Game {
   id: string;
@@ -114,35 +115,51 @@ export const activeGames: Game[] = [
 
 export default function Home() {
   const router = useRouter();
+  const { user } = useAuthStore();
+  const userInitial = user?.email?.[0].toUpperCase() ?? 'U';
+  const userName = user?.email?.split('@')[0] ?? 'User';
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <View className="bg-background flex-1">
       <SafeArea edges={['top']}>
         <View className="flex-1">
           <View className="flex-row items-center justify-between border-b border-gray-600/50 px-3">
             <Pressable className="active:bg-accent dark:active:bg-accent/50 flex-row gap-2 rounded p-2 pr-4 transition-colors">
-              <Avatar className="size-12" alt="Zach Nugent's Avatar">
-                <AvatarImage source={{ uri: 'https://github.com/mrzachnugent.png' }} />
+              <Avatar className="size-12" alt="User Avatar">
                 <AvatarFallback>
-                  <Text>ZN</Text>
+                  <Text>{userInitial}</Text>
                 </AvatarFallback>
               </Avatar>
               <View className="justify-center">
-                <Text className="text-lg leading-none font-medium">Zach Nugent</Text>
+                <Text className="text-lg leading-none font-medium">{userName}</Text>
                 <Text className="pt-1 text-sm leading-none text-gray-500">online</Text>
               </View>
             </Pressable>
-            <View>
+            <View className="flex-row items-center gap-1">
+              <Button
+                variant="ghost"
+                className="aspect-square size-12 rounded-full p-4"
+                onPress={handleLogout}>
+                <Icon as={LogOut} size={24} />
+              </Button>
               <Button variant="ghost" className="aspect-square size-12 rounded-full p-4">
                 <Icon as={BellIcon} size={24} />
               </Button>
             </View>
           </View>
+
           <ScrollView
             className="flex-1"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20, paddingHorizontal: 12 }}>
             <View className="mt-8 gap-2">
-              <Button className="h-16 rounded-full border-2 border-sky-300 bg-sky-100 transition-colors duration-100 active:bg-sky-200 dark:border-sky-700 dark:bg-sky-500 dark:active:bg-sky-400">
+              <Button
+                onPress={() => router.push(`/game/new`)}
+                className="h-16 rounded-full border-2 border-sky-300 bg-sky-100 transition-colors duration-100 active:bg-sky-200 dark:border-sky-700 dark:bg-sky-500 dark:active:bg-sky-400">
                 <Icon
                   as={PlusIcon}
                   size={24}
@@ -151,7 +168,7 @@ export default function Home() {
                 <Text className="light:text-primary text-xl">Yangi o'yin</Text>
               </Button>
               <Button
-                onPress={() => router.push(`/game/room/new`)}
+                onPress={() => router.push(`/game/room/TBLGHR`)}
                 className="h-16 rounded-full border-2 border-emerald-300 bg-emerald-100 transition-colors duration-100 active:bg-emerald-200 dark:border-emerald-700 dark:bg-emerald-500 dark:active:bg-emerald-400">
                 <Icon
                   as={Users2Icon}

@@ -1,35 +1,63 @@
 import { create } from 'zustand';
-import { GamePhase, Player, Question } from '@/types/game';
+import { Game, GameState, Player, SyncStatePayload } from '@/types/game';
 
-interface GameStore {
-  gameState: GamePhase;
-  currentQuestion: Question | null;
-  players: Player[];
-  lockedBy: string | null;
-  syncWithServer: (data: any) => void;
+const initialState: Game = {
+  roomId: '',
+  gameState: 'WAITING',
+  totalCategories: 0,
+  currentQuestion: null,
+  questionIndex: 0,
+  totalQuestions: 0,
+  expiresAt: null,
+  scrambleEndTime: null,
+  buzzTimestamp: null,
+  serverTime: 0,
+  serverTimeOffset: 0,
+  lockedBy: null,
+  wrongAnswersInRoom: 0,
+  lastGuess: null,
+  players: [],
+  hostId: '',
+  maxPlayers: 0,
+  isPrivate: false,
+  hasPassword: false,
+};
+
+interface GameStore extends Game {
+  syncRoom: (data: SyncStatePayload) => void;
+  setGameState: (state: GameState) => void;
+  setLockedBy: (playerId: string | null) => void;
+  updatePlayers: (player: Player) => void;
   handleBuzzAccepted: (playerId: string) => void;
+  reset: () => void;
 }
 
 export const useGameStore = create<GameStore>((set) => ({
-  gameState: 'IDLE',
-  currentQuestion: null,
-  players: [],
-  lockedBy: null,
+  ...initialState,
 
-  // Method to update everything at once from the server
-  // TODO: Fix the types
-  syncWithServer: (data: any) =>
-    set({
-      gameState: data.phase,
-      currentQuestion: data.question,
-      players: data.players,
-      lockedBy: data.lockedBy,
+  syncRoom: (data: SyncStatePayload) => set({ ...data }),
+
+  setGameState: (gameState: GameState) => set({ gameState }),
+
+  setLockedBy: (lockedBy: string | null) => set({ lockedBy }),
+
+  updatePlayers: (player: Player) =>
+    set((state) => {
+      const existingPlayer = state.players.find((p) => p.id === player.id);
+      if (existingPlayer) {
+        return {
+          players: state.players.map((p) => (p.id === player.id ? player : p)),
+        };
+      } else {
+        return { players: [...state.players, player] };
+      }
     }),
 
-  // Partial updates for speed (e.g., someone buzzed)
   handleBuzzAccepted: (playerId: string) =>
     set({
-      gameState: 'TYPING',
+      gameState: 'ANSWERING',
       lockedBy: playerId,
     }),
+
+  reset: () => set(initialState),
 }));
