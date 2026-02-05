@@ -11,6 +11,10 @@ import { useAuthStore } from '@/store/useAuthStore';
 export default function QuestionComponent() {
   const lockedBy = useGameStore((state) => state.lockedBy);
   const user = useAuthStore((state) => state.user);
+  const currentQuestion = useGameStore((state) => state.currentQuestion);
+
+  if (!currentQuestion) return null;
+
   return (
     <ScrollView
       className="flex-1"
@@ -19,21 +23,15 @@ export default function QuestionComponent() {
       <View className="gap-2">
         <Card className="mx-4 py-4">
           <CardHeader className="flex-row items-center justify-between">
-            <CardTitle>-TAR-</CardTitle>
+            <CardTitle>{currentQuestion.category}</CardTitle>
             <CardDescription>
               <Badge variant={'default'} className="p-1 px-4">
-                <Text className="text-md">50</Text>
+                <Text className="text-md">{currentQuestion?.difficulty * 10}</Text>
               </Badge>
             </CardDescription>
           </CardHeader>
           <CardContent className="relative overflow-clip rounded-2xl">
-            <Text>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum? Lorem
-              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum? Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum? Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, voluptatum? Lorem ipsum dolor sit
-              amet consectetur adipisicing elit. Quisquam, voluptatum?
-            </Text>
+            <Text>{currentQuestion?.text}</Text>
             {lockedBy && user?.id !== lockedBy && (
               <BlurView
                 tint="dark"

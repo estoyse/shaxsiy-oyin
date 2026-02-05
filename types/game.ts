@@ -44,23 +44,21 @@ export interface Question {
   category: string;
   text: string;
   difficulty: number;
+  scrambleEndTime: number;
+  questionIndex: number;
 }
 
 export interface Game {
   roomId: string;
   gameState: GameState;
-  totalCategories: number;
-
+  categoriesCount: number;
   currentQuestion: Question | null;
-  questionIndex: number;
   totalQuestions: number;
-
   expiresAt: string | null; // ISO Timestamp
   scrambleEndTime: number | null; // Server timestamp
   buzzTimestamp: number | null; // Server timestamp
   serverTime: number; // Last known server time
   serverTimeOffset: number; // clientTime - serverTime
-
   // Logic State
   lockedBy: string | null; // Player ID who hit the buzzer (answeringPlayerId)
   wrongAnswersInRoom: number;
@@ -69,7 +67,6 @@ export interface Game {
     text: string;
     isCorrect: boolean;
   } | null;
-
   // Player Data
   players: Player[];
   hostId: string;

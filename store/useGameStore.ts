@@ -1,12 +1,11 @@
 import { create } from 'zustand';
-import { Game, GameState, Player, SyncStatePayload } from '@/types/game';
+import { Game, GameState, Player, Question, SyncStatePayload } from '@/types/game';
 
 const initialState: Game = {
   roomId: '',
   gameState: 'WAITING',
-  totalCategories: 0,
+  categoriesCount: 0,
   currentQuestion: null,
-  questionIndex: 0,
   totalQuestions: 0,
   expiresAt: null,
   scrambleEndTime: null,
@@ -28,6 +27,7 @@ interface GameStore extends Game {
   setGameState: (state: GameState) => void;
   setLockedBy: (playerId: string | null) => void;
   updatePlayers: (player: Player) => void;
+  setQuestion: (question: Question) => void;
   handleBuzzAccepted: (playerId: string) => void;
   reset: () => void;
 }
@@ -35,11 +35,17 @@ interface GameStore extends Game {
 export const useGameStore = create<GameStore>((set) => ({
   ...initialState,
 
-  syncRoom: (data: SyncStatePayload) => set({ ...data }),
+  syncRoom: (data: SyncStatePayload) =>
+    set({
+      ...data,
+      serverTimeOffset: data.serverTime - Date.now(),
+    }),
 
   setGameState: (gameState: GameState) => set({ gameState }),
 
   setLockedBy: (lockedBy: string | null) => set({ lockedBy }),
+
+  setQuestion: (question: Question) => set({ currentQuestion: question }),
 
   updatePlayers: (player: Player) =>
     set((state) => {
