@@ -7,6 +7,9 @@ import { useSocket } from '@/providers/socketProvider';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useGameStore } from '@/store/useGameStore';
 import { toast } from 'sonner-native';
+import CircularTimer from './circularTimer';
+import { useQuestionTimer } from '@/hooks/useQuestionTimer';
+import { useServerTime } from '@/hooks/useServerTime';
 
 export default function ButtonContainer() {
   const { socket, isConnected } = useSocket();
@@ -14,6 +17,10 @@ export default function ButtonContainer() {
   const lockedBy = useGameStore((state) => state.lockedBy);
   const players = useGameStore((state) => state.players);
   const wrongAnswers = useGameStore((state) => state.wrongAnswersInRoom);
+  const currentQuestion = useGameStore((state) => state.currentQuestion);
+
+  const serverTime = useServerTime();
+  const remainingMs = useQuestionTimer(currentQuestion?.scrambleEndTime || 0, serverTime.now);
 
   const handleBuzzerPress = () => {
     if (!socket) {
@@ -58,14 +65,18 @@ export default function ButtonContainer() {
               />
             ))}
           </View>
-          <Button
-            className="tactile-button relative z-10 flex size-40 flex-col items-center justify-center rounded-full bg-red-500 transition-transform duration-300 active:scale-96 active:bg-red-500"
-            onPress={handleBuzzerPress}>
-            <Icon as={BellRingIcon} size={36} />
-            <Text className="font-dm-bold align text-3xl font-black tracking-tighter text-white">
-              BUZZ
-            </Text>
-          </Button>
+          <View className="relative flex items-center justify-center">
+            <CircularTimer size={170} strokeWidth={6}>
+              <Button
+                className="tactile-button flex size-40 flex-col items-center justify-center rounded-full bg-red-500 transition-transform duration-300 active:scale-96 active:bg-red-500"
+                onPress={handleBuzzerPress}>
+                <Icon as={BellRingIcon} size={36} />
+                <Text className="font-dm-bold text-3xl font-black tracking-tighter text-white">
+                  BUZZ
+                </Text>
+              </Button>
+            </CircularTimer>
+          </View>
 
           <View className="border-border bg-card flex items-center gap-6 rounded-full border p-4 opacity-0">
             <Icon as={XIcon} className="text-red-500" />
