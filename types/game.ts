@@ -49,9 +49,14 @@ export interface Question {
 }
 
 export interface Game {
+  // Config/Metadata
   roomId: string;
-  gameState: GameState;
+  isPrivate: boolean;
+  hasPassword: boolean;
+  maxPlayers: number;
   categoriesCount: number;
+  // Game State
+  gameState: GameState;
   currentQuestion: Question | null;
   totalQuestions: number;
   expiresAt: string | null; // ISO Timestamp
@@ -61,20 +66,11 @@ export interface Game {
   serverTimeOffset: number; // clientTime - serverTime
   // Logic State
   lockedBy: string | null; // Player ID who hit the buzzer (answeringPlayerId)
-  wrongAnswersInRoom: number;
-  lastGuess: {
-    playerId: string;
-    text: string;
-    isCorrect: boolean;
-  } | null;
-  // Player Data
+
   players: Player[];
   hostId: string;
-
-  // Config/Metadata
-  maxPlayers: number;
-  isPrivate: boolean;
-  hasPassword: boolean;
+  answers: GivenAnswer[];
+  strikes: number;
 }
 
 export interface SyncStatePayload {
@@ -121,10 +117,12 @@ export interface AnswerPayload {
 }
 
 export interface AnswerResultPayload {
-  correct: boolean;
-  correctAnswer?: string; // Only sent if wrong/timeout and everyone failed? Or always?
-  previousScore: number;
+  correct: false;
+  playerId: string;
   newScore: number;
+  previousScore: number;
+  strikes: number;
+  answers: GivenAnswer[];
 }
 
 export interface QuestionStartPayload {
@@ -132,4 +130,12 @@ export interface QuestionStartPayload {
   text: string;
   category?: string;
   scrambleDuration: number;
+}
+
+export interface GivenAnswer {
+  playerId: string;
+  playerName: string;
+  text: string;
+  correct: boolean;
+  timestamp: number;
 }

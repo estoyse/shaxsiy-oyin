@@ -11,6 +11,7 @@ import { toast } from 'sonner-native';
 import CircularTimer from './circularTimer';
 import AnsweringCard from './answerCard';
 import AnswerInput from './answerInput';
+import AnswerFeedback from './answerFeedback';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export default function ButtonContainer() {
@@ -18,8 +19,9 @@ export default function ButtonContainer() {
   const user = useAuthStore((state) => state.user);
   const lockedBy = useGameStore((state) => state.lockedBy);
   const players = useGameStore((state) => state.players);
-  const wrongAnswers = useGameStore((state) => state.wrongAnswersInRoom);
   const gameState = useGameStore((state) => state.gameState);
+  const strikes = useGameStore((state) => state.strikes);
+  const answers = useGameStore((state) => state.answers);
 
   const isMyBuzz = lockedBy != null && lockedBy === user?.id;
 
@@ -82,33 +84,36 @@ export default function ButtonContainer() {
           />
         )
       ) : (
-        <View className="flex-row items-center justify-between gap-4">
-          <View className="border-border bg-card flex items-center gap-6 rounded-full border p-4">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <Icon
-                as={XIcon}
-                className={index < wrongAnswers ? 'text-red-500' : 'text-gray-300'}
-                key={index}
-              />
-            ))}
-          </View>
-          <View className="relative flex items-center justify-center">
-            <CircularTimer size={175} strokeWidth={6}>
-              <Button
-                className="tactile-button flex size-40 flex-col items-center justify-center rounded-full bg-red-500 transition-transform duration-300 active:scale-96 active:bg-red-500"
-                onPress={handleBuzzerPress}>
-                <Icon as={BellRingIcon} size={36} />
-                <Text className="font-dm-bold text-3xl font-black tracking-tighter text-white">
-                  BUZZ
-                </Text>
-              </Button>
-            </CircularTimer>
-          </View>
+        <View className="gap-6">
+          {answers.length > 0 && <AnswerFeedback answers={answers} />}
+          <View className="flex-row items-center justify-between gap-4">
+            <View className="border-border bg-card flex items-center gap-6 rounded-full border p-4">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Icon
+                  as={XIcon}
+                  className={index < strikes ? 'text-red-500' : 'text-gray-300'}
+                  key={index}
+                />
+              ))}
+            </View>
+            <View className="relative flex items-center justify-center">
+              <CircularTimer size={175} strokeWidth={6}>
+                <Button
+                  className="tactile-button flex size-40 flex-col items-center justify-center rounded-full bg-red-500 transition-transform duration-300 active:scale-96 active:bg-red-500"
+                  onPress={handleBuzzerPress}>
+                  <Icon as={BellRingIcon} size={36} />
+                  <Text className="font-dm-bold text-3xl font-black tracking-tighter text-white">
+                    BUZZ
+                  </Text>
+                </Button>
+              </CircularTimer>
+            </View>
 
-          <View className="border-border bg-card flex items-center gap-6 rounded-full border p-4 opacity-0">
-            <Icon as={XIcon} className="text-red-500" />
-            <Icon as={XIcon} className="text-red-500" />
-            <Icon as={XIcon} className="light:text-gray-300 text-red-100" />
+            <View className="border-border bg-card flex items-center gap-6 rounded-full border p-4 opacity-0">
+              <Icon as={XIcon} className="text-red-500" />
+              <Icon as={XIcon} className="text-red-500" />
+              <Icon as={XIcon} className="light:text-gray-300 text-red-100" />
+            </View>
           </View>
         </View>
       )}

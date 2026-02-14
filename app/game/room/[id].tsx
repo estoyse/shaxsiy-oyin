@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useSocket } from '@/providers/socketProvider';
-import { Player, Question, SyncStatePayload } from '@/types/game';
+import { AnswerResultPayload, Player, Question, SyncStatePayload } from '@/types/game';
 import { toast } from 'sonner-native';
 import { usePreventRemove } from '@react-navigation/native';
 
@@ -24,8 +24,8 @@ export default function RoomPage() {
   const setLockedBy = useGameStore((state) => state.setLockedBy);
   const setGameState = useGameStore((state) => state.setGameState);
   const setScrambleTime = useGameStore((state) => state.setScrambleTime);
-  const setStrikes = useGameStore((state) => state.setStrikes);
   const updatePlayerScore = useGameStore((state) => state.updatePlayerScore);
+  const updateAnswers = useGameStore((state) => state.updateAnswers);
   const { socket } = useSocket();
   const [preventLeave, setPreventLeave] = useState(true);
 
@@ -67,6 +67,7 @@ export default function RoomPage() {
 
     socket.on('QUESTION_START', (data: Question) => {
       setQuestion(data);
+      updateAnswers([], 0);
     });
 
     socket.on('BUZZ_ACCEPTED', (data) => {
@@ -80,15 +81,14 @@ export default function RoomPage() {
       }
     });
 
-    socket.on('ANSWER_RESULT', (data) => {
+    socket.on('ANSWER_RESULT', (data: AnswerResultPayload) => {
+      console.log('ANSWER_RESULT: ', data);
       setLockedBy(null);
       setGameState('SCRAMBLE');
-      setStrikes(data.strikes);
+      updateAnswers(data.answers, data.strikes);
       if (data.playerId) {
         updatePlayerScore(data.playerId, data.newScore);
       }
-      console.log(`Player ${data.playerId} answer was ${data.correct ? 'CORRECT' : 'WRONG'}`);
-      console.log('New Score:', data);
     });
 
     socket.on('RESET_SCRAMBLE', (data) => {

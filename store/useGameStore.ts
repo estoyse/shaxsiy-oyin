@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Game, GameState, Player, Question, SyncStatePayload } from '@/types/game';
+import { Game, GameState, GivenAnswer, Player, Question, SyncStatePayload } from '@/types/game';
 
 const initialState: Game = {
   roomId: '',
@@ -13,13 +13,13 @@ const initialState: Game = {
   serverTime: 0,
   serverTimeOffset: 0,
   lockedBy: null,
-  wrongAnswersInRoom: 0,
-  lastGuess: null,
   players: [],
   hostId: '',
   maxPlayers: 0,
   isPrivate: false,
   hasPassword: false,
+  answers: [],
+  strikes: 0,
 };
 
 interface GameStore extends Game {
@@ -30,8 +30,9 @@ interface GameStore extends Game {
   setQuestion: (question: Question) => void;
   handleBuzzAccepted: (playerId: string) => void;
   setScrambleTime: (scrambleEndTime: number) => void;
-  setStrikes: (strikes: number) => void;
   updatePlayerScore: (playerId: string, score: number) => void;
+  updateAnswers: (answers: GivenAnswer[], strikes: number) => void;
+
   reset: () => void;
 }
 
@@ -47,7 +48,6 @@ export const useGameStore = create<GameStore>((set) => ({
   setGameState: (gameState: GameState) => set({ gameState }),
 
   setLockedBy: (lockedBy: string | null) => set({ lockedBy }),
-  setStrikes: (strikes: number) => set({ wrongAnswersInRoom: strikes }),
 
   setQuestion: (question: Question) =>
     set({ currentQuestion: question, scrambleEndTime: question.scrambleEndTime }),
@@ -76,6 +76,8 @@ export const useGameStore = create<GameStore>((set) => ({
     set((state) => ({
       players: state.players.map((p) => (p.id === playerId ? { ...p, score } : p)),
     })),
+
+  updateAnswers: (answers, strikes) => set({ answers, strikes }),
 
   reset: () => set(initialState),
 }));
