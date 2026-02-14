@@ -29,6 +29,9 @@ interface GameStore extends Game {
   updatePlayers: (player: Player) => void;
   setQuestion: (question: Question) => void;
   handleBuzzAccepted: (playerId: string) => void;
+  setScrambleTime: (scrambleEndTime: number) => void;
+  setStrikes: (strikes: number) => void;
+  updatePlayerScore: (playerId: string, score: number) => void;
   reset: () => void;
 }
 
@@ -44,8 +47,10 @@ export const useGameStore = create<GameStore>((set) => ({
   setGameState: (gameState: GameState) => set({ gameState }),
 
   setLockedBy: (lockedBy: string | null) => set({ lockedBy }),
+  setStrikes: (strikes: number) => set({ wrongAnswersInRoom: strikes }),
 
-  setQuestion: (question: Question) => set({ currentQuestion: question }),
+  setQuestion: (question: Question) =>
+    set({ currentQuestion: question, scrambleEndTime: question.scrambleEndTime }),
 
   updatePlayers: (player: Player) =>
     set((state) => {
@@ -64,6 +69,13 @@ export const useGameStore = create<GameStore>((set) => ({
       gameState: 'ANSWERING',
       lockedBy: playerId,
     }),
+
+  setScrambleTime: (scrambleEndTime: number) => set({ scrambleEndTime }),
+
+  updatePlayerScore: (playerId: string, score: number) =>
+    set((state) => ({
+      players: state.players.map((p) => (p.id === playerId ? { ...p, score } : p)),
+    })),
 
   reset: () => set(initialState),
 }));

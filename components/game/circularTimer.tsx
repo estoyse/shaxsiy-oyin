@@ -1,51 +1,63 @@
+import React, { useEffect, useMemo } from 'react';
+import { View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { Animated, Easing, View } from 'react-native';
-import React from 'react';
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { useGameStore } from '@/store/useGameStore';
 
+// Create an animated version of the SVG Circle
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-export default function CircularTimer({
-  size = 170,
-  strokeWidth = 6,
-  children,
-}: {
+interface CircularTimerProps {
   size?: number;
   strokeWidth?: number;
-  children: React.ReactNode;
-}) {
+  children?: React.ReactNode;
+}
+
+export default function CircularTimer({
+  size = 200,
+  strokeWidth = 6,
+  children,
+}: CircularTimerProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
+
   const serverTimeOffset = useGameStore((state) => state.serverTimeOffset);
-  const endTime = useGameStore((state) => state.currentQuestion?.scrambleEndTime);
+  const endTime = useGameStore((state) => state.scrambleEndTime);
 
-  const progress = React.useRef(new Animated.Value(0)).current;
+  // 1. Use SharedValue instead of Animated.Value
+  const progress = useSharedValue(0);
 
-  const duration = React.useMemo(() => {
-    return (endTime ?? 0) - new Date().getTime() + serverTimeOffset;
+  const duration = useMemo(() => {
+    const timeLeft = (endTime ?? 0) - new Date().getTime() + serverTimeOffset;
+    return timeLeft > 0 ? timeLeft : 0;
   }, [serverTimeOffset, endTime]);
 
-  React.useEffect(() => {
-    progress.setValue(0);
-
-    Animated.timing(progress, {
-      toValue: 1,
-      duration,
+  useEffect(() => {
+    // 2. Reset and trigger animation via Reanimated
+    progress.value = 0;
+    progress.value = withTiming(1, {
+      duration: duration,
       easing: Easing.linear,
-      useNativeDriver: false,
-    }).start();
+    });
   }, [duration]);
 
-  const strokeDashoffset = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, circumference],
+  // 3. Define the animated props to be applied to the Circle
+  const animatedProps = useAnimatedProps(() => {
+    return {
+      strokeDashoffset: circumference * progress.value,
+    };
   });
 
   return (
     <View style={{ width: size, height: size }} className="relative items-center justify-center">
       <View className="absolute inset-0">
-        <Svg width={size} height={size} className="">
-          {/* Track */}
+        <Svg width={size} height={size}>
+          {/* Track (Background) */}
           <Circle
             cx={size / 2}
             cy={size / 2}
@@ -54,7 +66,7 @@ export default function CircularTimer({
             strokeWidth={strokeWidth}
             fill="none"
           />
-          {/* Progress */}
+          {/* Progress (Animated) */}
           <AnimatedCircle
             cx={size / 2}
             cy={size / 2}
@@ -62,15 +74,14 @@ export default function CircularTimer({
             stroke="#ef4444"
             strokeWidth={strokeWidth}
             fill="none"
-            strokeDasharray={`${circumference} ${circumference}`}
-            strokeDashoffset={strokeDashoffset}
+            strokeDasharray={circumference}
+            animatedProps={animatedProps} // 4. Apply animated props here
             strokeLinecap="round"
             rotation="-90"
             origin={`${size / 2}, ${size / 2}`}
           />
         </Svg>
       </View>
-
       {children}
     </View>
   );

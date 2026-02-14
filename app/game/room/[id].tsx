@@ -21,6 +21,11 @@ export default function RoomPage() {
   const updatePlayers = useGameStore((state) => state.updatePlayers);
   const setQuestion = useGameStore((state) => state.setQuestion);
   const reset = useGameStore((state) => state.reset);
+  const setLockedBy = useGameStore((state) => state.setLockedBy);
+  const setGameState = useGameStore((state) => state.setGameState);
+  const setScrambleTime = useGameStore((state) => state.setScrambleTime);
+  const setStrikes = useGameStore((state) => state.setStrikes);
+  const updatePlayerScore = useGameStore((state) => state.updatePlayerScore);
   const { socket } = useSocket();
   const [preventLeave, setPreventLeave] = useState(true);
 
@@ -62,8 +67,39 @@ export default function RoomPage() {
 
     socket.on('QUESTION_START', (data: Question) => {
       setQuestion(data);
+    });
 
-      console.log('QUESTION_START: ', data);
+    socket.on('BUZZ_ACCEPTED', (data) => {
+      setLockedBy(data.playerId);
+      if (data.playerId === socket.id) {
+        // It's me! Show input field.
+        console.log('My turn to answer!');
+      } else {
+        // Someone else buzzed. Lock UI.
+        console.log('BUZZ_ACCEPTED: ', data);
+      }
+    });
+
+    socket.on('ANSWER_RESULT', (data) => {
+      setLockedBy(null);
+      setGameState('SCRAMBLE');
+      setStrikes(data.strikes);
+      if (data.playerId) {
+        updatePlayerScore(data.playerId, data.newScore);
+      }
+      console.log(`Player ${data.playerId} answer was ${data.correct ? 'CORRECT' : 'WRONG'}`);
+      console.log('New Score:', data);
+    });
+
+    socket.on('RESET_SCRAMBLE', (data) => {
+      const scrambleEndTime = data.duration + new Date().getTime();
+      setScrambleTime(scrambleEndTime);
+      console.log('Scramble reset data: ', data);
+    });
+
+    socket.on('GAME_END', () => {
+      setPreventLeave(false);
+      router.replace('/game/room/[id]/result');
     });
 
     return () => {
@@ -71,6 +107,10 @@ export default function RoomPage() {
       socket.off('ROOM_SYNC');
       socket.off('PLAYER_JOINED');
       socket.off('QUESTION_START');
+      socket.off('BUZZ_ACCEPTED');
+      socket.off('ANSWER_RESULT');
+      socket.off('RESET_SCRAMBLE');
+      socket.off('GAME_END');
     };
   }, [id, socket]);
 
