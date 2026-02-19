@@ -170,7 +170,7 @@ export default function Home() {
                 <Text className="light:text-primary text-xl">Yangi o'yin</Text>
               </Button>
               <Button
-                onPress={() => router.push(`/game/room/TBLGHR`)}
+                onPress={() => router.push(`/game/room/TBLGHR/result`)}
                 className="h-16 rounded-full border-2 border-emerald-300 bg-emerald-100 transition-colors duration-100 active:bg-emerald-200 dark:border-emerald-700 dark:bg-emerald-500 dark:active:bg-emerald-400">
                 <Icon
                   as={Users2Icon}
