@@ -26,6 +26,7 @@ export default function RoomPage() {
   const setScrambleTime = useGameStore((state) => state.setScrambleTime);
   const updatePlayerScore = useGameStore((state) => state.updatePlayerScore);
   const updateAnswers = useGameStore((state) => state.updateAnswers);
+  const setRevealTime = useGameStore((state) => state.setRevealTime);
   const { socket } = useSocket();
   const [preventLeave, setPreventLeave] = useState(true);
 
@@ -69,6 +70,8 @@ export default function RoomPage() {
     socket.on('QUESTION_START', (data: Question) => {
       setQuestion(data);
       updateAnswers([], 0);
+      setRevealTime(null);
+      setGameState('SCRAMBLE');
     });
 
     socket.on('BUZZ_ACCEPTED', (data) => {
@@ -85,21 +88,30 @@ export default function RoomPage() {
     socket.on('ANSWER_RESULT', (data: AnswerResultPayload) => {
       console.log('ANSWER_RESULT: ', data);
       setLockedBy(null);
-      setGameState('SCRAMBLE');
+
+      const questionEnded =
+        data.reason === 'CORRECT_ANSWER' ||
+        data.reason === 'STRIKE_LIMIT' ||
+        data.reason === 'TIMEOUT';
+
+      if (questionEnded) {
+        const revealDurationMs = data.revealDuration ?? 12000;
+        setRevealTime(Date.now() + revealDurationMs);
+        setGameState('REVEAL');
+      } else {
+        // WRONG_ANSWER — question continues, others can still buzz
+        setGameState('SCRAMBLE');
+      }
 
       if (data.reason === 'STRIKE_LIMIT' || data.reason === 'TIMEOUT') {
-        updateAnswers(
-          [
-            {
-              correct: true,
-              playerId: data.playerId,
-              playerName: 'Unknown',
-              text: data.correctAnswer || 'Unknown',
-              timestamp: Date.now(),
-            },
-          ],
-          data.strikes
-        );
+        const revealAnswer = {
+          correct: true,
+          playerId: 'system',
+          playerName: "To'g'ri javob",
+          text: data.correctAnswer || 'Unknown',
+          timestamp: Date.now(),
+        };
+        updateAnswers([...data.answers, revealAnswer], data.strikes);
       } else {
         updateAnswers(data.answers, data.strikes);
       }

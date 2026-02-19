@@ -8,6 +8,7 @@ export type GameState =
   | 'ANSWERING'
   | 'RESET_SCRAMBLE'
   | 'GRADING'
+  | 'REVEAL'
   | 'ENDED';
 
 export type GameEventType =
@@ -66,6 +67,7 @@ export interface Game {
   serverTimeOffset: number; // clientTime - serverTime
   // Logic State
   lockedBy: string | null; // Player ID who hit the buzzer (answeringPlayerId)
+  revealEndTime: number | null; // Timestamp when REVEAL phase ends
 
   players: Player[];
   hostId: string;
@@ -117,7 +119,7 @@ export interface AnswerPayload {
 }
 
 export interface AnswerResultPayload {
-  correct: false;
+  correct: boolean;
   playerId: string;
   newScore: number;
   previousScore: number;
@@ -125,6 +127,7 @@ export interface AnswerResultPayload {
   answers: GivenAnswer[];
   reason: 'STRIKE_LIMIT' | 'CORRECT_ANSWER' | 'WRONG_ANSWER' | 'TIMEOUT';
   correctAnswer?: string;
+  revealDuration?: number; // ms to show the answer
 }
 
 export interface QuestionStartPayload {

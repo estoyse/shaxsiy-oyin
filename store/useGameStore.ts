@@ -13,6 +13,7 @@ const initialState: Game = {
   serverTime: 0,
   serverTimeOffset: 0,
   lockedBy: null,
+  revealEndTime: null,
   players: [],
   hostId: '',
   maxPlayers: 0,
@@ -32,6 +33,7 @@ interface GameStore extends Game {
   setScrambleTime: (scrambleEndTime: number) => void;
   updatePlayerScore: (playerId: string, score: number) => void;
   updateAnswers: (answers: GivenAnswer[], strikes: number) => void;
+  setRevealTime: (revealEndTime: number | null) => void;
 
   reset: () => void;
 }
@@ -78,6 +80,8 @@ export const useGameStore = create<GameStore>((set) => ({
     })),
 
   updateAnswers: (answers, strikes) => set({ answers, strikes }),
+
+  setRevealTime: (revealEndTime) => set({ revealEndTime }),
 
   reset: () => set(initialState),
 }));
