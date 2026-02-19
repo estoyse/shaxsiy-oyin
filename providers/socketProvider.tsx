@@ -17,8 +17,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     console.log(SOCKET_URL);
 
     // Initialize socket
-    // const socketInstance = io(SOCKET_URL, {
-    const socketInstance = io('http://192.168.0.107:3000', {
+    const socketInstance = io(SOCKET_URL, {
+      // const socketInstance = io('http://192.168.0.107:3000', {
       transports: ['websocket'],
       autoConnect: true,
       auth: {

@@ -7,6 +7,7 @@ interface AuthStore {
   initialized: boolean;
   setSession: (session: Session | null) => void;
   setInitialized: (initialized: boolean) => void;
+  logout: () => void;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -15,4 +16,5 @@ export const useAuthStore = create<AuthStore>((set) => ({
   initialized: false,
   setSession: (session) => set({ session, user: session?.user ?? null }),
   setInitialized: (initialized) => set({ initialized }),
+  logout: () => set({ session: null, user: null }),
 }));

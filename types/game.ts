@@ -123,6 +123,8 @@ export interface AnswerResultPayload {
   previousScore: number;
   strikes: number;
   answers: GivenAnswer[];
+  reason: 'STRIKE_LIMIT' | 'CORRECT_ANSWER' | 'WRONG_ANSWER' | 'TIMEOUT';
+  correctAnswer?: string;
 }
 
 export interface QuestionStartPayload {

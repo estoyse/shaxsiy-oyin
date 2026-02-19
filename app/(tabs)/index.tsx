@@ -118,9 +118,11 @@ export default function Home() {
   const { user } = useAuthStore();
   const userInitial = user?.email?.[0].toUpperCase() ?? 'U';
   const userName = user?.email?.split('@')[0] ?? 'User';
+  const logout = useAuthStore((state) => state.logout);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    logout();
   };
 
   return (

@@ -51,6 +51,7 @@ export default function RoomPage() {
     });
 
     socket.on('PLAYER_JOINED', (data: { player: Player; reconnected?: boolean }) => {
+      console.log('PLAYER_JOINED: ', data);
       // If player already exists, do not add
       if (players.find((player) => player.id === data.player.id)) return;
       updatePlayers(data.player);
@@ -85,7 +86,23 @@ export default function RoomPage() {
       console.log('ANSWER_RESULT: ', data);
       setLockedBy(null);
       setGameState('SCRAMBLE');
-      updateAnswers(data.answers, data.strikes);
+
+      if (data.reason === 'STRIKE_LIMIT' || data.reason === 'TIMEOUT') {
+        updateAnswers(
+          [
+            {
+              correct: true,
+              playerId: data.playerId,
+              playerName: 'Unknown',
+              text: data.correctAnswer || 'Unknown',
+              timestamp: Date.now(),
+            },
+          ],
+          data.strikes
+        );
+      } else {
+        updateAnswers(data.answers, data.strikes);
+      }
       if (data.playerId) {
         updatePlayerScore(data.playerId, data.newScore);
       }
