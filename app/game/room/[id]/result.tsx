@@ -103,7 +103,7 @@ export default function FinalLeaderboard() {
             <View className="flex-row items-center gap-4">
               {/* Avatar with Gold Ring */}
               <View className="relative">
-                <View className="h-14 w-14 rounded-full bg-gradient-to-b from-amber-500 to-orange-700 p-[2px]">
+                <View className="h-14 w-14 rounded-full bg-linear-to-b from-amber-500 to-orange-700 p-[2px]">
                   <Avatar alt={player.name} className="border-card h-full w-full border-2">
                     <AvatarImage source={{ uri: player.avatar }} />
                     <AvatarFallback>

@@ -1,117 +1,64 @@
 import SafeArea from '@/components/safeArea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 import { useRouter } from 'expo-router';
-import { BellIcon, PlusIcon, Users2Icon } from 'lucide-react-native';
-import { Pressable, ScrollView, View } from 'react-native';
+import { BellIcon } from 'lucide-react-native';
+import { Pressable, View } from 'react-native';
 import { useAuthStore } from '@/store/useAuthStore';
 import { supabase } from '@/lib/supabase';
 import { LogOut } from 'lucide-react-native';
+import ArcadeScreen from '@/components/home/games';
 
-export interface Game {
-  id: string;
-  name: string;
-  players: number;
-  maxPlayers: number;
-  roundsLeft: number;
-  totalRounds: number;
-  status: 'waiting' | 'in-progress' | 'final-round';
-  gameType: string;
-  startedAt: string;
-}
+const featuredGame = {
+  id: 'shaxsiy-oyin',
+  title: "Shaxsiy O'yin",
+  description: 'Beat the clock in this high-speed synthwave runner.',
+  image: 'https://picsum.photos/seed/cyberpunk/600/400',
+  badge: 'Daily Challenge',
+  rating: 5,
+};
 
-export const activeGames: Game[] = [
+const games = [
   {
-    id: '1',
-    name: 'Epic Battle Royale',
-    players: 8,
-    maxPlayers: 10,
-    roundsLeft: 5,
-    totalRounds: 10,
-    status: 'in-progress',
-    gameType: 'Battle Royale',
-    startedAt: '2026-02-01T10:30:00Z',
+    id: 'zakovat-quiz',
+    title: 'Zakovat Quiz',
+    category: 'Brain Training',
+    rating: 4.9,
+    image: 'https://picsum.photos/seed/math/300/300',
   },
   {
-    id: '2',
-    name: 'Speed Chess Masters',
-    players: 4,
-    maxPlayers: 4,
-    roundsLeft: 1,
-    totalRounds: 7,
-    status: 'final-round',
-    gameType: 'Chess',
-    startedAt: '2026-02-01T09:15:00Z',
+    id: 'zakovat-minutka',
+    title: 'Zakovat Minutka',
+    category: 'Puzzle',
+    rating: 4.5,
+    image: 'https://picsum.photos/seed/puzzle/300/300',
   },
   {
-    id: '3',
-    name: 'Tower Defense Pro',
-    players: 6,
-    maxPlayers: 8,
-    roundsLeft: 12,
-    totalRounds: 15,
-    status: 'in-progress',
-    gameType: 'Tower Defense',
-    startedAt: '2026-02-01T11:00:00Z',
+    id: 'trivia-king',
+    title: 'Trivia King',
+    category: 'Knowledge',
+    rating: 4.8,
+    image: 'https://picsum.photos/seed/trivia/300/300',
+    isHot: true,
   },
   {
-    id: '4',
-    name: 'Trivia Night',
-    players: 10,
-    maxPlayers: 10,
-    roundsLeft: 8,
-    totalRounds: 10,
-    status: 'waiting',
-    gameType: 'Trivia',
-    startedAt: '2026-02-01T10:45:00Z',
-  },
-  {
-    id: '5',
-    name: 'Racing Championship',
-    players: 7,
-    maxPlayers: 8,
-    roundsLeft: 3,
-    totalRounds: 8,
-    status: 'in-progress',
-    gameType: 'Racing',
-    startedAt: '2026-02-01T09:30:00Z',
-  },
-  {
-    id: '6',
-    name: 'Card Clash',
-    players: 4,
-    maxPlayers: 6,
-    roundsLeft: 6,
-    totalRounds: 10,
-    status: 'in-progress',
-    gameType: 'Card Game',
-    startedAt: '2026-02-01T10:00:00Z',
-  },
-  {
-    id: '7',
-    name: 'Puzzle Masters',
-    players: 5,
-    maxPlayers: 8,
-    roundsLeft: 2,
-    totalRounds: 5,
-    status: 'final-round',
-    gameType: 'Puzzle',
-    startedAt: '2026-02-01T08:45:00Z',
-  },
-  {
-    id: '8',
-    name: 'Strategy Showdown',
-    players: 6,
-    maxPlayers: 6,
-    roundsLeft: 10,
-    totalRounds: 12,
-    status: 'in-progress',
-    gameType: 'Strategy',
-    startedAt: '2026-02-01T11:15:00Z',
+    id: 'word-scape',
+    title: 'Word Scape',
+    category: 'Casual',
+    rating: 4.2,
+    image: 'https://picsum.photos/seed/word/300/300',
   },
 ];
+
+const recentGame = {
+  id: 'chess',
+  title: 'Master Chess',
+  level: 12,
+  progress: 65,
+  image: 'https://picsum.photos/seed/chess/100/100',
+};
 
 export default function Home() {
   const router = useRouter();
@@ -129,7 +76,7 @@ export default function Home() {
     <View className="bg-background flex-1">
       <SafeArea edges={['top']}>
         <View className="flex-1">
-          <View className="flex-row items-center justify-between border-b border-gray-600/50 px-3">
+          <View className="flex-row items-center justify-between px-3">
             <Pressable className="active:bg-accent dark:active:bg-accent/50 flex-row gap-2 rounded p-2 pr-4 transition-colors">
               <Avatar className="size-12" alt="User Avatar">
                 <AvatarFallback>
@@ -154,7 +101,19 @@ export default function Home() {
             </View>
           </View>
 
-          <ScrollView
+          <ArcadeScreen
+            featuredGame={featuredGame}
+            games={games}
+            recentGame={recentGame}
+            walletBalance={2450}
+            onBack={() => console.log('Back')}
+            onPlayFeatured={(id) => console.log('Play featured', id)}
+            onPlayGame={(id) => console.log('Play game', id)}
+            onPlayRecent={(id) => console.log('Play recent', id)}
+            onViewAllRecent={() => console.log('View all recent')}
+          />
+
+          {/* <ScrollView
             className="flex-1"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20, paddingHorizontal: 12 }}>
@@ -253,7 +212,7 @@ export default function Home() {
                 </View>
               </View>
             </View>
-          </ScrollView>
+          </ScrollView> */}
         </View>
       </SafeArea>
     </View>
