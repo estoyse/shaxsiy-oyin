@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { BellIcon } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -15,7 +15,8 @@ const featuredGame = {
   id: 'shaxsiy-oyin',
   title: "Shaxsiy O'yin",
   description: 'Beat the clock in this high-speed synthwave runner.',
-  image: 'https://picsum.photos/seed/cyberpunk/600/400',
+  image:
+    'https://lh5.googleusercontent.com/proxy/yFM3MFBh7lxo9WGMnUDQC0zX0XiXq0Hra0oXHeTBOzcpwYWQZj7qZ1BIW5vFR-ba9bCYTrqaPTA1xbnbKU1cxdaEkMxqvJmX354XcyPo1Xg5hlBQ5YT6hxzic34RVx5zYvKPJU_CLVHoA08',
   badge: 'Daily Challenge',
   rating: 5,
 };
@@ -26,7 +27,7 @@ const games = [
     title: 'Zakovat Quiz',
     category: 'Brain Training',
     rating: 4.9,
-    image: 'https://picsum.photos/seed/math/300/300',
+    image: 'https://cdn.zakovatklubi.uz/uploads/z4/m_VbgjJurxScWzqoWfLqn69om7KJe3UD.jpg',
   },
   {
     id: 'zakovat-minutka',
@@ -108,7 +109,7 @@ export default function Home() {
             walletBalance={2450}
             onBack={() => console.log('Back')}
             onPlayFeatured={(id) => console.log('Play featured', id)}
-            onPlayGame={(id) => console.log('Play game', id)}
+            onPlayGame={(id) => router.push(`/game/${id}` as Href)}
             onPlayRecent={(id) => console.log('Play recent', id)}
             onViewAllRecent={() => console.log('View all recent')}
           />

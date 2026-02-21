@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, ScrollView, Pressable, Image } from 'react-native';
 
 import { PlayCircle, Star, Play } from 'lucide-react-native';
 import { Text } from '../ui/text';
-import { Button } from '../ui/button';
 interface Game {
   id: string;
   title: string;
@@ -48,16 +47,11 @@ export default function ArcadeScreen({
   featuredGame,
   games,
   recentGame,
-  walletBalance,
-  onBack,
   onPlayFeatured,
   onPlayGame,
   onPlayRecent,
   onViewAllRecent,
 }: ArcadeScreenProps) {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-
   const StarRating = ({ rating }: { rating: number }) => (
     <View className="flex-row">
       {[...Array(5)].map((_, i) => (
@@ -109,7 +103,8 @@ export default function ArcadeScreen({
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 1,
               shadowRadius: 0,
-            }}>
+            }}
+            onPress={() => onPlayGame(featuredGame.id)}>
             <PlayCircle size={20} color="#FFFFFF" />
             <Text className="font-bold text-white">Play Now</Text>
           </Pressable>
@@ -194,11 +189,18 @@ export default function ArcadeScreen({
             <Text className="mb-3 text-xs text-slate-400">{game.category}</Text>
 
             {/* Start Button */}
-            <Button
-              variant="outline"
-              className="h-9 w-full rounded-lg border-slate-600 bg-slate-700">
-              <Text className="text-sm font-semibold text-indigo-300">Start</Text>
-            </Button>
+            <Pressable
+              className="h-8 w-full flex-row items-center justify-center gap-2 rounded-sm bg-indigo-500 active:translate-y-0.5"
+              style={{
+                shadowColor: '#4338ca',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 1,
+                shadowRadius: 0,
+              }}
+              onPress={() => onPlayGame(game.id)}>
+              <PlayCircle size={16} color="#FFFFFF" />
+              <Text className="font-bold text-white">Play Now</Text>
+            </Pressable>
           </Pressable>
         ))}
       </View>
