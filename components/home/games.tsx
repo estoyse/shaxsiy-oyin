@@ -99,10 +99,7 @@ export default function ArcadeScreen({
           <Pressable
             className="h-12 w-full flex-row items-center justify-center gap-2 rounded-xl bg-indigo-500 active:translate-y-1"
             style={{
-              shadowColor: '#4338ca',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 1,
-              shadowRadius: 0,
+              boxShadow: '0px 4px 0px #4338ca',
             }}
             onPress={() => onPlayGame(featuredGame.id)}>
             <PlayCircle size={20} color="#FFFFFF" />
@@ -192,10 +189,7 @@ export default function ArcadeScreen({
             <Pressable
               className="h-8 w-full flex-row items-center justify-center gap-2 rounded-sm bg-indigo-500 active:translate-y-0.5"
               style={{
-                shadowColor: '#4338ca',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 1,
-                shadowRadius: 0,
+                boxShadow: '0px 3px 0px #4338ca',
               }}
               onPress={() => onPlayGame(game.id)}>
               <PlayCircle size={16} color="#FFFFFF" />
