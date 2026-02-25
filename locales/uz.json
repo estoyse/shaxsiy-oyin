@@ -1,0 +1,60 @@
+{
+  "common": {
+    "settings": "Sozlamalar",
+    "general": "Umumiy",
+    "preferences": "Afzalliklar",
+    "support": "Yordam va Aloqa",
+    "logout": "Tizimdan chiqish",
+    "cancel": "Bekor qilish",
+    "error": "Xatolik",
+    "success": "Muvaffaqiyatli",
+    "version": "Versiya",
+    "online": "onlayn"
+  },
+  "home": {
+    "play_now": "Hozir o'yna",
+    "featured": "Tanlangan o'yin",
+    "recent": "Oxirgi o'yinlar",
+    "categories": "Kategoriyalar",
+    "wallet": "Hamyon",
+    "view_all": "Hammasini ko'isar",
+    "home_tab": "Asosiy",
+    "active_tab": "Aktiv o'yinlar",
+    "settings_tab": "Sozlamalar"
+  },
+  "settings": {
+    "subtitle": "Ilovani o'zingizga moslang",
+    "user": "Foydalanuvchi",
+    "language": "Til",
+    "language_desc": "Ilova tilini tanlang",
+    "theme": "Mavzu",
+    "theme_desc": "Ko'rinishni o'zgartirish",
+    "notifications": "Bildirishnomalar",
+    "sounds": "Ovoz effektlari",
+    "privacy": "Xavfsizlik va Maxfiylik",
+    "help_center": "Yordam markazi",
+    "rate_app": "Ilovani baholang",
+    "about": "Ilova haqida",
+    "logout_confirm_title": "Chiqish",
+    "logout_confirm_desc": "Haqiqatan ham tizimdan chiqmoqchimisiz?"
+  },
+  "games": {
+    "shaxsiy_oyin": {
+      "title": "Shaxsiy O'yin",
+      "description": "Ushbu yuqori tezlikdagi runnerda vaqtni yengib o'ting."
+    },
+    "zakovat_quiz": {
+      "title": "Zakovat Quiz",
+      "category": "Miya mashqi"
+    },
+    "zakovat_minutka": {
+      "title": "Zakovat Minutka",
+      "category": "Boshqotirma"
+    }
+  },
+  "themes": {
+    "light": "Yorug'",
+    "dark": "To'q",
+    "system": "Tizim"
+  }
+}

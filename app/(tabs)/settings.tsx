@@ -18,7 +18,6 @@ import {
   Volume2,
 } from 'lucide-react-native';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { useState } from 'react';
 import { useUniwind, Uniwind } from 'uniwind';
 import { useAuthStore } from '@/store/useAuthStore';
 import { supabase } from '@/lib/supabase';
@@ -27,29 +26,37 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner-native';
+import { useTranslation } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SettingsScreen() {
-  const [lang, setLang] = useState('uz');
-
+  const { t, i18n } = useTranslation();
   const { user, logout } = useAuthStore();
-
   const { theme, hasAdaptiveThemes } = useUniwind();
 
   const themes = [
-    { name: 'light', label: 'Light', icon: Sun },
-    { name: 'dark', label: 'Dark', icon: Moon },
-    { name: 'system', label: 'System', icon: Monitor },
+    { name: 'light', label: t('themes.light'), icon: Sun },
+    { name: 'dark', label: t('themes.dark'), icon: Moon },
+    { name: 'system', label: t('themes.system'), icon: Monitor },
   ];
+
   const activeTheme = hasAdaptiveThemes ? 'system' : theme;
 
+  const handleLanguageChange = async (newLang: string | undefined) => {
+    if (newLang) {
+      await i18n.changeLanguage(newLang);
+      await AsyncStorage.setItem('user-language', newLang);
+    }
+  };
+
   const handleLogout = async () => {
-    Alert.alert('Chiqish', 'Haqiqatan ham tizimdan chiqmoqchimisiz?', [
+    Alert.alert(t('settings.logout_confirm_title'), t('settings.logout_confirm_desc'), [
       {
-        text: 'Bekor qilish',
+        text: t('common.cancel'),
         style: 'cancel',
       },
       {
-        text: 'Chiqish',
+        text: t('common.logout'),
         style: 'destructive',
         onPress: async () => {
           const { error } = await supabase.auth.signOut();
@@ -68,8 +75,8 @@ export default function SettingsScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <SafeArea edges={['top']}>
         <View className="px-6 pt-4 pb-2">
-          <Text className="font-dm-bold text-3xl">Sozlamalar</Text>
-          <Text className="text-muted-foreground text-sm">Ilovani o'zingizga moslang</Text>
+          <Text className="font-dm-bold text-3xl">{t('common.settings')}</Text>
+          <Text className="text-muted-foreground text-sm">{t('settings.subtitle')}</Text>
         </View>
 
         <ScrollView className="flex-1 px-4 py-4" showsVerticalScrollIndicator={false}>
@@ -77,7 +84,7 @@ export default function SettingsScreen() {
           <Card className="bg-primary/5 mb-6 overflow-hidden border-none">
             <CardContent className="flex-row items-center gap-4 py-6">
               <Avatar
-                alt={user?.user_metadata?.full_name || 'User Avatar'}
+                alt={user?.user_metadata?.full_name || t('settings.user')}
                 className="size-16 border-2 border-white/20">
                 <AvatarImage source={{ uri: user?.user_metadata?.avatar_url }} />
                 <AvatarFallback>
@@ -88,7 +95,7 @@ export default function SettingsScreen() {
               </Avatar>
               <View className="flex-1">
                 <Text className="text-xl font-bold">
-                  {user?.user_metadata?.full_name || 'Foydalanuvchi'}
+                  {user?.user_metadata?.full_name || t('settings.user')}
                 </Text>
                 <Text className="text-muted-foreground text-sm">{user?.email}</Text>
               </View>
@@ -99,13 +106,14 @@ export default function SettingsScreen() {
           </Card>
 
           {/* General Section */}
-          <SettingSection title="Umumiy">
-            <SettingItem icon={Languages} title="Til" description="Ilova tilini tanlang">
+          <SettingSection title={t('common.general')}>
+            <SettingItem
+              icon={Languages}
+              title={t('settings.language')}
+              description={t('settings.language_desc')}>
               <ToggleGroup
-                value={lang}
-                onValueChange={(val) => {
-                  if (val) setLang(val as string);
-                }}
+                value={i18n.language}
+                onValueChange={handleLanguageChange}
                 variant="outline"
                 type="single">
                 <ToggleGroupItem isFirst value="uz">
@@ -122,7 +130,10 @@ export default function SettingsScreen() {
 
             <Separator className="bg-border/50 my-1" />
 
-            <SettingItem icon={Monitor} title="Mavzu" description="Ko'rinishni o'zgartirish">
+            <SettingItem
+              icon={Monitor}
+              title={t('settings.theme')}
+              description={t('settings.theme_desc')}>
               <ToggleGroup
                 value={activeTheme}
                 onValueChange={(val) => {
@@ -130,13 +141,13 @@ export default function SettingsScreen() {
                 }}
                 variant="outline"
                 type="single">
-                {themes.map((theme, index) => (
+                {themes.map((themeItem, index) => (
                   <ToggleGroupItem
-                    key={theme.name}
-                    value={theme.name}
+                    key={themeItem.name}
+                    value={themeItem.name}
                     isFirst={index === 0}
                     isLast={index === themes.length - 1}>
-                    <Icon as={theme.icon} size={14} />
+                    <Icon as={themeItem.icon} size={14} />
                   </ToggleGroupItem>
                 ))}
               </ToggleGroup>
@@ -144,21 +155,25 @@ export default function SettingsScreen() {
           </SettingSection>
 
           {/* Preferences Section */}
-          <SettingSection title="Afzalliklar">
-            <SettingActionItem icon={Bell} title="Bildirishnomalar" />
+          <SettingSection title={t('common.preferences')}>
+            <SettingActionItem icon={Bell} title={t('settings.notifications')} />
             <Separator className="bg-border/50 my-1" />
-            <SettingActionItem icon={Volume2} title="Ovoz effektlari" />
+            <SettingActionItem icon={Volume2} title={t('settings.sounds')} />
             <Separator className="bg-border/50 my-1" />
-            <SettingActionItem icon={ShieldCheck} title="Xavfsizlik va Maxfiylik" />
+            <SettingActionItem icon={ShieldCheck} title={t('settings.privacy')} />
           </SettingSection>
 
           {/* Support Section */}
-          <SettingSection title="Yordam va Aloqa">
-            <SettingActionItem icon={MessageSquare} title="Yordam markazi" />
+          <SettingSection title={t('common.support')}>
+            <SettingActionItem icon={MessageSquare} title={t('settings.help_center')} />
             <Separator className="bg-border/50 my-1" />
-            <SettingActionItem icon={Heart} title="Ilovani baholang" />
+            <SettingActionItem icon={Heart} title={t('settings.rate_app')} />
             <Separator className="bg-border/50 my-1" />
-            <SettingActionItem icon={Info} title="Ilova haqida" description="Versiya 1.0.0" />
+            <SettingActionItem
+              icon={Info}
+              title={t('settings.about')}
+              description={`${t('common.version')} 1.0.0`}
+            />
           </SettingSection>
 
           {/* Logout Section */}
@@ -168,7 +183,7 @@ export default function SettingsScreen() {
               className="h-14 flex-row items-center justify-center gap-2 rounded-2xl shadow-lg shadow-red-500/20"
               onPress={handleLogout}>
               <Icon as={LogOut} size={20} color="white" />
-              <Text className="text-lg font-bold text-white">Tizimdan chiqish</Text>
+              <Text className="text-lg font-bold text-white">{t('common.logout')}</Text>
             </Button>
           </View>
         </ScrollView>

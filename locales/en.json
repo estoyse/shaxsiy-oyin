@@ -1,0 +1,60 @@
+{
+  "common": {
+    "settings": "Settings",
+    "general": "General",
+    "preferences": "Preferences",
+    "support": "Support & Contact",
+    "logout": "Log Out",
+    "cancel": "Cancel",
+    "error": "Error",
+    "success": "Success",
+    "version": "Version",
+    "online": "online"
+  },
+  "home": {
+    "play_now": "Play Now",
+    "featured": "Featured Game",
+    "recent": "Recent Games",
+    "categories": "Categories",
+    "wallet": "Wallet",
+    "view_all": "View All",
+    "home_tab": "Home",
+    "active_tab": "Active Games",
+    "settings_tab": "Settings"
+  },
+  "settings": {
+    "subtitle": "Customize the app to your liking",
+    "user": "User",
+    "language": "Language",
+    "language_desc": "Select app language",
+    "theme": "Theme",
+    "theme_desc": "Change appearance",
+    "notifications": "Notifications",
+    "sounds": "Sound Effects",
+    "privacy": "Security & Privacy",
+    "help_center": "Help Center",
+    "rate_app": "Rate the app",
+    "about": "About the app",
+    "logout_confirm_title": "Log Out",
+    "logout_confirm_desc": "Are you sure you want to log out?"
+  },
+  "games": {
+    "shaxsiy_oyin": {
+      "title": "Shaxsiy Game",
+      "description": "Beat the clock in this high-speed synthwave runner."
+    },
+    "zakovat_quiz": {
+      "title": "Zakovat Quiz",
+      "category": "Brain Training"
+    },
+    "zakovat_minutka": {
+      "title": "Zakovat Minutka",
+      "category": "Puzzle"
+    }
+  },
+  "themes": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

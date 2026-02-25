@@ -10,63 +10,65 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { supabase } from '@/lib/supabase';
 import { LogOut } from 'lucide-react-native';
 import ArcadeScreen from '@/components/home/games';
-
-const featuredGame = {
-  id: 'shaxsiy-oyin',
-  title: "Shaxsiy O'yin",
-  description: 'Beat the clock in this high-speed synthwave runner.',
-  image:
-    'https://lh5.googleusercontent.com/proxy/yFM3MFBh7lxo9WGMnUDQC0zX0XiXq0Hra0oXHeTBOzcpwYWQZj7qZ1BIW5vFR-ba9bCYTrqaPTA1xbnbKU1cxdaEkMxqvJmX354XcyPo1Xg5hlBQ5YT6hxzic34RVx5zYvKPJU_CLVHoA08',
-  badge: 'Daily Challenge',
-  rating: 5,
-};
-
-const games = [
-  {
-    id: 'zakovat-quiz',
-    title: 'Zakovat Quiz',
-    category: 'Brain Training',
-    rating: 4.9,
-    image: 'https://cdn.zakovatklubi.uz/uploads/z4/m_VbgjJurxScWzqoWfLqn69om7KJe3UD.jpg',
-  },
-  {
-    id: 'zakovat-minutka',
-    title: 'Zakovat Minutka',
-    category: 'Puzzle',
-    rating: 4.5,
-    image: 'https://picsum.photos/seed/puzzle/300/300',
-  },
-  {
-    id: 'trivia-king',
-    title: 'Trivia King',
-    category: 'Knowledge',
-    rating: 4.8,
-    image: 'https://picsum.photos/seed/trivia/300/300',
-    isHot: true,
-  },
-  {
-    id: 'word-scape',
-    title: 'Word Scape',
-    category: 'Casual',
-    rating: 4.2,
-    image: 'https://picsum.photos/seed/word/300/300',
-  },
-];
-
-const recentGame = {
-  id: 'chess',
-  title: 'Master Chess',
-  level: 12,
-  progress: 65,
-  image: 'https://picsum.photos/seed/chess/100/100',
-};
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user } = useAuthStore();
   const userInitial = user?.email?.[0].toUpperCase() ?? 'U';
-  const userName = user?.email?.split('@')[0] ?? 'User';
+  const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
   const logout = useAuthStore((state) => state.logout);
+
+  const featuredGame = {
+    id: 'shaxsiy-oyin',
+    title: t('games.shaxsiy_oyin.title'),
+    description: t('games.shaxsiy_oyin.description'),
+    image:
+      'https://lh5.googleusercontent.com/proxy/yFM3MFBh7lxo9WGMnUDQC0zX0XiXq0Hra0oXHeTBOzcpwYWQZj7qZ1BIW5vFR-ba9bCYTrqaPTA1xbnbKU1cxdaEkMxqvJmX354XcyPo1Xg5hlBQ5YT6hxzic34RVx5zYvKPJU_CLVHoA08',
+    badge: 'Daily Challenge',
+    rating: 5,
+  };
+
+  const games = [
+    {
+      id: 'zakovat-quiz',
+      title: t('games.zakovat_quiz.title'),
+      category: t('games.zakovat_quiz.category'),
+      rating: 4.9,
+      image: 'https://cdn.zakovatklubi.uz/uploads/z4/m_VbgjJurxScWzqoWfLqn69om7KJe3UD.jpg',
+    },
+    {
+      id: 'zakovat-minutka',
+      title: t('games.zakovat_minutka.title'),
+      category: t('games.zakovat_minutka.category'),
+      rating: 4.5,
+      image: 'https://picsum.photos/seed/puzzle/300/300',
+    },
+    {
+      id: 'trivia-king',
+      title: 'Trivia King',
+      category: 'Knowledge',
+      rating: 4.8,
+      image: 'https://picsum.photos/seed/trivia/300/300',
+      isHot: true,
+    },
+    {
+      id: 'word-scape',
+      title: 'Word Scape',
+      category: 'Casual',
+      rating: 4.2,
+      image: 'https://picsum.photos/seed/word/300/300',
+    },
+  ];
+
+  const recentGame = {
+    id: 'chess',
+    title: 'Master Chess',
+    level: 12,
+    progress: 65,
+    image: 'https://picsum.photos/seed/chess/100/100',
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -86,7 +88,9 @@ export default function Home() {
               </Avatar>
               <View className="justify-center">
                 <Text className="text-lg leading-none font-medium">{userName}</Text>
-                <Text className="pt-1 text-sm leading-none text-gray-500">online</Text>
+                <Text className="pt-1 text-sm leading-none text-gray-500">
+                  {t('common.online')}
+                </Text>
               </View>
             </Pressable>
             <View className="flex-row items-center gap-1">
@@ -113,107 +117,6 @@ export default function Home() {
             onPlayRecent={(id) => console.log('Play recent', id)}
             onViewAllRecent={() => console.log('View all recent')}
           />
-
-          {/* <ScrollView
-            className="flex-1"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 20, paddingHorizontal: 12 }}>
-            <View className="mt-8 gap-2">
-              <Button
-                onPress={() => router.push(`/game/new`)}
-                className="h-16 rounded-full border-2 border-sky-300 bg-sky-100 transition-colors duration-100 active:bg-sky-200 dark:border-sky-700 dark:bg-sky-500 dark:active:bg-sky-400">
-                <Icon
-                  as={PlusIcon}
-                  size={24}
-                  className="text-primary-foreground light:text-primary"
-                />
-                <Text className="light:text-primary text-xl">Yangi o'yin</Text>
-              </Button>
-              <Button
-                onPress={() => router.push(`/game/room/TBLGHR/result`)}
-                className="h-16 rounded-full border-2 border-emerald-300 bg-emerald-100 transition-colors duration-100 active:bg-emerald-200 dark:border-emerald-700 dark:bg-emerald-500 dark:active:bg-emerald-400">
-                <Icon
-                  as={Users2Icon}
-                  size={24}
-                  className="text-primary-foreground light:text-primary"
-                />
-                <Text className="light:text-primary text-xl">O'yinga qo'shilish</Text>
-              </Button>
-            </View>
-            <View>
-              <View className="mt-5 flex-row justify-between p-3">
-                <Text>Reyting</Text>
-                <Text>To'liq ro'yxat</Text>
-              </View>
-              <View className="gap-2 rounded-2xl bg-neutral-200 p-3 dark:bg-neutral-900">
-                <View className="pxp-28 flex-row items-center justify-between rounded bg-yellow-300 p-2 dark:bg-yellow-600">
-                  <View className="flex-row items-center gap-3">
-                    <Text>1.</Text>
-                    <Avatar className="size-8" alt="Zach Nugent's Avatar">
-                      <AvatarImage source={{ uri: 'https://github.com/mrzachnugent.png' }} />
-                      <AvatarFallback>
-                        <Text>ZN</Text>
-                      </AvatarFallback>
-                    </Avatar>
-                    <Text>John Doe</Text>
-                  </View>
-                  <Text>2347 pts</Text>
-                </View>
-                <View className="pxp-28 flex-row items-center justify-between rounded bg-zinc-300 p-2 dark:bg-zinc-500">
-                  <View className="flex-row items-center gap-3">
-                    <Text>1.</Text>
-                    <Avatar className="size-8" alt="Zach Nugent's Avatar">
-                      <AvatarImage source={{ uri: 'https://github.com/mrzachnugent.png' }} />
-                      <AvatarFallback>
-                        <Text>ZN</Text>
-                      </AvatarFallback>
-                    </Avatar>
-                    <Text>John Doe</Text>
-                  </View>
-                  <Text>2347 pts</Text>
-                </View>
-                <View className="pxp-28 flex-row items-center justify-between rounded bg-yellow-600 p-2 dark:bg-yellow-900">
-                  <View className="flex-row items-center gap-3">
-                    <Text>1.</Text>
-                    <Avatar className="size-8" alt="Zach Nugent's Avatar">
-                      <AvatarImage source={{ uri: 'https://github.com/mrzachnugent.png' }} />
-                      <AvatarFallback>
-                        <Text>ZN</Text>
-                      </AvatarFallback>
-                    </Avatar>
-                    <Text>John Doe</Text>
-                  </View>
-                  <Text>2347 pts</Text>
-                </View>
-                <View className="pxp-28 flex-row items-center justify-between rounded bg-stone-400 p-2 dark:bg-stone-800">
-                  <View className="flex-row items-center gap-3">
-                    <Text>1.</Text>
-                    <Avatar className="size-8" alt="Zach Nugent's Avatar">
-                      <AvatarImage source={{ uri: 'https://github.com/mrzachnugent.png' }} />
-                      <AvatarFallback>
-                        <Text>ZN</Text>
-                      </AvatarFallback>
-                    </Avatar>
-                    <Text>John Doe</Text>
-                  </View>
-                  <Text>2347 pts</Text>
-                </View>
-                <View className="pxp-28 flex-row items-center justify-between rounded bg-stone-400 p-2 dark:bg-stone-800">
-                  <View className="flex-row items-center gap-3">
-                    <Text>1.</Text>
-                    <Avatar className="size-8" alt="Zach Nugent's Avatar">
-                      <AvatarImage source={{ uri: 'https://github.com/mrzachnugent.png' }} />
-                      <AvatarFallback>
-                        <Text>ZN</Text>
-                      </AvatarFallback>
-                    </Avatar>
-                    <Text>John Doe</Text>
-                  </View>
-                  <Text>2347 pts</Text>
-                </View>
-              </View>
-            </View>
-          </ScrollView> */}
         </View>
       </SafeArea>
     </View>

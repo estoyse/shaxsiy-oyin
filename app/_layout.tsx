@@ -1,4 +1,5 @@
 import '@/global.css';
+import '@/lib/i18n';
 import { NAV_THEME } from '@/lib/theme';
 import { ThemeProvider } from '@react-navigation/native';
 import { PortalHost } from '@rn-primitives/portal';

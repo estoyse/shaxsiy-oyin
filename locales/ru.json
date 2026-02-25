@@ -1,0 +1,60 @@
+{
+  "common": {
+    "settings": "Настройки",
+    "general": "Общие",
+    "preferences": "Предпочтения",
+    "support": "Поддержка и контакты",
+    "logout": "Выйти",
+    "cancel": "Отмена",
+    "error": "Ошибка",
+    "success": "Успех",
+    "version": "Версия",
+    "online": "в сети"
+  },
+  "home": {
+    "play_now": "Играть сейчас",
+    "featured": "Рекомендуемая игра",
+    "recent": "Недавние игры",
+    "categories": "Категории",
+    "wallet": "Кошелек",
+    "view_all": "Показать все",
+    "home_tab": "Главная",
+    "active_tab": "Активные игры",
+    "settings_tab": "Настройки"
+  },
+  "settings": {
+    "subtitle": "Настройте приложение под себя",
+    "user": "Пользователь",
+    "language": "Язык",
+    "language_desc": "Выберите язык приложения",
+    "theme": "Тема",
+    "theme_desc": "Изменить внешний вид",
+    "notifications": "Уведомления",
+    "sounds": "Звуковые эффекты",
+    "privacy": "Безопасность и конфиденциальность",
+    "help_center": "Центр помощи",
+    "rate_app": "Оценить приложение",
+    "about": "О приложении",
+    "logout_confirm_title": "Выход",
+    "logout_confirm_desc": "Вы действительно хотите выйти из системы?"
+  },
+  "games": {
+    "shaxsiy_oyin": {
+      "title": "Шаксий Ойин",
+      "description": "Победите время в этом скоростном раннере в стиле синтвейв."
+    },
+    "zakovat_quiz": {
+      "title": "Zakovat Quiz",
+      "category": "Тренировка мозга"
+    },
+    "zakovat_minutka": {
+      "title": "Zakovat Minutka",
+      "category": "Головоломка"
+    }
+  },
+  "themes": {
+    "light": "Светлая",
+    "dark": "Темная",
+    "system": "Системная"
+  }
+}
