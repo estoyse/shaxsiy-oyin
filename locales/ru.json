@@ -40,15 +40,15 @@
   },
   "games": {
     "shaxsiy_oyin": {
-      "title": "Шаксий Ойин",
+      "title": "Своя игра",
       "description": "Победите время в этом скоростном раннере в стиле синтвейв."
     },
     "zakovat_quiz": {
-      "title": "Zakovat Quiz",
+      "title": "Заковат Quiz",
       "category": "Тренировка мозга"
     },
     "zakovat_minutka": {
-      "title": "Zakovat Minutka",
+      "title": "Заковат Минутка",
       "category": "Головоломка"
     }
   },

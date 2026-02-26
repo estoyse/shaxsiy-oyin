@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, ScrollView, Pressable, TextInput } from 'react-native';
+import { View, ScrollView, TextInput, Pressable } from 'react-native';
 import { EyeOff } from 'lucide-react-native';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -8,32 +8,50 @@ import { router, Stack } from 'expo-router';
 import { SocialConnections } from '@/components/social-connections';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
-import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner-native';
 
-const LoginScreen = () => {
-  const [checked, setChecked] = React.useState(false);
+const RegisterScreen = () => {
   const [email, setEmail] = React.useState('');
+  const [fullName, setFullName] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const passwordInputRef = React.useRef<TextInput>(null);
+  const emailInputRef = React.useRef<TextInput>(null);
 
   function onEmailSubmitEditing() {
     passwordInputRef.current?.focus();
   }
 
-  async function signInWithEmail() {
+  function onFullNameSubmitEditing() {
+    emailInputRef.current?.focus();
+  }
+
+  async function signUpWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    console.log({ email, password, fullName });
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
       email: email,
       password: password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
     });
 
+    console.log({ session, error });
+
     if (error) {
+      console.log(error);
       toast.error(error.message);
+    } else if (!session) {
+      toast.info('Please check your inbox for email verification!');
     } else {
-      toast.success('Successfully signed in!');
+      toast.success('Successfully signed up!');
     }
     setLoading(false);
   }
@@ -56,14 +74,32 @@ const LoginScreen = () => {
             <View className="h-16 w-16 rounded-full bg-[#caff33]/30" />
           </View>
 
-          <Text className="mt-8 text-3xl font-bold tracking-tight text-white">Welcome Back!</Text>
+          <Text className="mt-8 text-3xl font-bold tracking-tight text-white">
+            Create Your Account
+          </Text>
           <Text className="mt-3 px-4 text-center leading-5 text-gray-400">
-            Sign in to access smart, personalized travel plans made for you.
+            Create your account to explore exciting features
           </Text>
         </View>
 
         {/* Form Section */}
         <View className="mt-12 gap-y-6 px-8">
+          <View className="gap-y-2">
+            <Label className="text-md ml-1 text-gray-300">Full name</Label>
+            <Input
+              placeholder="Alex Smith"
+              value={fullName}
+              onChangeText={setFullName}
+              keyboardType="default"
+              autoComplete="name"
+              autoCapitalize="words"
+              onSubmitEditing={onFullNameSubmitEditing}
+              returnKeyType="next"
+              submitBehavior="submit"
+              className="h-14 rounded-2xl border-white/10 bg-transparent text-white"
+            />
+          </View>
+
           {/* Email Field */}
           <View className="gap-y-2">
             <Label className="text-md ml-1 text-gray-300">Email address*</Label>
@@ -78,6 +114,7 @@ const LoginScreen = () => {
               onSubmitEditing={onEmailSubmitEditing}
               returnKeyType="next"
               submitBehavior="submit"
+              ref={emailInputRef}
               className="h-14 rounded-2xl border-white/10 bg-transparent text-white"
             />
           </View>
@@ -93,7 +130,7 @@ const LoginScreen = () => {
                 onChangeText={setPassword}
                 secureTextEntry
                 returnKeyType="send"
-                onSubmitEditing={signInWithEmail}
+                onSubmitEditing={signUpWithEmail}
                 placeholder="@Sn123hsn#"
                 className="h-14 rounded-2xl border-white/10 bg-transparent pr-12 text-white"
               />
@@ -103,31 +140,13 @@ const LoginScreen = () => {
             </View>
           </View>
 
-          {/* Checkbox & Forgot Password */}
-          <View className="flex-row items-center justify-between px-1">
-            <Pressable
-              onPress={() => setChecked((prev) => !prev)}
-              className="flex-row items-center gap-x-2">
-              <Checkbox
-                checked={checked}
-                onCheckedChange={setChecked}
-                pointerEvents="none"
-                className="rounded border-white/20 bg-transparent"
-              />
-              <Text className="text-md text-gray-400">Remember me</Text>
-            </Pressable>
-            <TouchableOpacity>
-              <Text className="text-md font-medium text-gray-300">Forgot Password?</Text>
-            </TouchableOpacity>
-          </View>
-
           {/* Primary Action */}
           <Button
-            onPress={signInWithEmail}
+            className="h-16 flex-row gap-x-2 rounded-full bg-[#caff33] active:opacity-90"
             disabled={loading}
-            className="h-16 flex-row gap-x-2 rounded-full bg-[#caff33] active:opacity-90">
+            onPress={signUpWithEmail}>
             <Text className="text-lg font-bold text-black">
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Loading...' : 'Sign up'}
             </Text>
           </Button>
         </View>
@@ -158,4 +177,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default RegisterScreen;

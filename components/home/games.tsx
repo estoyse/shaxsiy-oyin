@@ -3,6 +3,8 @@ import { View, ScrollView, Pressable, Image } from 'react-native';
 
 import { PlayCircle, Star, Play } from 'lucide-react-native';
 import { Text } from '../ui/text';
+import TactileButton from '../ui/tactile-button';
+import { Icon } from '../ui/icon';
 interface Game {
   id: string;
   title: string;
@@ -96,15 +98,10 @@ export default function ArcadeScreen({
             {featuredGame.description}
           </Text>
 
-          <Pressable
-            className="h-12 w-full flex-row items-center justify-center gap-2 rounded-xl bg-indigo-500 active:translate-y-1"
-            style={{
-              boxShadow: '0px 4px 0px #4338ca',
-            }}
-            onPress={() => onPlayGame(featuredGame.id)}>
-            <PlayCircle size={20} color="#FFFFFF" />
+          <TactileButton onPress={() => onPlayGame(featuredGame.id)}>
+            <Icon as={PlayCircle} size={20} color="#FFFFFF" />
             <Text className="font-bold text-white">Play Now</Text>
-          </Pressable>
+          </TactileButton>
         </View>
       </Pressable>
 
@@ -161,7 +158,7 @@ export default function ArcadeScreen({
         {games.map((game) => (
           <Pressable
             key={game.id}
-            className="w-[47.5%] rounded-2xl border border-slate-700/50 bg-slate-800 p-3 active:scale-95"
+            className="bg-card w-[47.5%] rounded-2xl border border-slate-700/50 p-3 active:scale-95"
             onPress={() => onPlayGame(game.id)}>
             {/* Game Image */}
             <View className="relative mb-3 aspect-square w-full overflow-hidden rounded-xl bg-slate-900">
@@ -187,9 +184,9 @@ export default function ArcadeScreen({
 
             {/* Start Button */}
             <Pressable
-              className="h-8 w-full flex-row items-center justify-center gap-2 rounded-sm bg-indigo-500 active:translate-y-0.5"
+              className="bg-primary h-8 w-full flex-row items-center justify-center gap-2 rounded-sm active:translate-y-0.5"
               style={{
-                boxShadow: '0px 3px 0px #4338ca',
+                boxShadow: '0px 3px 0px #02661c',
               }}
               onPress={() => onPlayGame(game.id)}>
               <PlayCircle size={16} color="#FFFFFF" />

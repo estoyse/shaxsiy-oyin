@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import TactileButton from '@/components/ui/tactile-button';
 import { Text } from '@/components/ui/text';
 import { useSocket } from '@/providers/socketProvider';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -89,7 +90,7 @@ export default function ShaxshiyOyinScreen() {
   );
 
   return (
-    <SafeArea edges={['top']}>
+    <SafeArea>
       <Tabs value={value} onValueChange={setValue} className="flex-1 p-4">
         <TabsList className="w-full">
           <TabsTrigger value="list" className="w-1/2">
@@ -208,15 +209,10 @@ export default function ShaxshiyOyinScreen() {
             </Card>
           </ScrollView>
           <View className="p-4">
-            <Pressable
-              className="h-12 w-full flex-row items-center justify-center gap-2 rounded-xl bg-indigo-500 active:translate-y-1"
-              onPress={handleCreateGame}
-              style={{
-                boxShadow: '0px 4px 0px #4338ca',
-              }}>
+            <TactileButton onPress={handleCreateGame}>
               <Icon as={PlusIcon} size={20} color="#FFFFFF" />
               <Text className="font-bold text-white">Yangi o'yin</Text>
-            </Pressable>
+            </TactileButton>
             {/* <Button
               onPress={handleCreateGame}
               className="h-16 rounded-full border-2 border-sky-300 bg-sky-100 transition-colors duration-100 active:bg-sky-200 dark:border-sky-700 dark:bg-sky-500 dark:active:bg-sky-400">
